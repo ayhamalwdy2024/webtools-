@@ -1,13 +1,21 @@
 #!/bin/bash
 
-# تحديث النظام وتثبيت pip
-echo "Updating system and installing pip..."
-sudo apt-get update -y
-sudo apt-get install -y python3-pip
+# اسم المستودع على GitHub
+GITHUB_REPO="https://github.com/YourUsername/YourRepository.git"
 
-# تثبيت المكتبات المطلوبة بواسطة pip
-echo "Installing required Python libraries..."
-pip3 install requests builtwith python-nmap colorama
+# مجلد مؤقت للتنزيل
+TEMP_DIR=$(mktemp -d)
+
+# تنزيل المشروع من GitHub
+echo "Cloning the GitHub repository..."
+git clone $GITHUB_REPO $TEMP_DIR
+
+# الانتقال إلى مجلد المشروع
+cd $TEMP_DIR
+
+# تثبيت المكتبات المطلوبة
+echo "Installing Python dependencies..."
+pip3 install -r requirements.txt
 
 # تثبيت nmap إذا لم يكن مثبتًا
 if ! command -v nmap &> /dev/null; then
@@ -17,4 +25,4 @@ else
     echo "nmap is already installed."
 fi
 
-echo "All dependencies are installed successfully!"
+echo "Installation complete! The tool is ready to use."
