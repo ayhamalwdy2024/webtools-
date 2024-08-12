@@ -1,10 +1,20 @@
-apt update && sudo apt upgrade -y  /
-apt install python3 python3-pip -y /
-apt install git -y /
-git clone https://github.com/ayhamalwdy2024/eng-ayham-alwdy /
-ls /
-cd eng-ayham-alwdy /
-ls /
-pip install requests colorama python-whois /
-python3 engayham,py 
- 
+#!/bin/bash
+
+# تحديث النظام وتثبيت pip
+echo "Updating system and installing pip..."
+sudo apt-get update -y
+sudo apt-get install -y python3-pip
+
+# تثبيت المكتبات المطلوبة بواسطة pip
+echo "Installing required Python libraries..."
+pip3 install requests builtwith python-nmap colorama
+
+# تثبيت nmap إذا لم يكن مثبتًا
+if ! command -v nmap &> /dev/null; then
+    echo "nmap not found, installing nmap..."
+    sudo apt-get install -y nmap
+else
+    echo "nmap is already installed."
+fi
+
+echo "All dependencies are installed successfully!"
