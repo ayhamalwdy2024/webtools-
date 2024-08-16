@@ -42,37 +42,51 @@ def print_banner():
 
 def gather_info(url):
     print(f"{OKBLUE}[INFO] Gathering Information for {url}{ENDC}")
-    response = requests.get(url)
-    print(f"{OKGREEN}[INFO] HTTP Headers:{ENDC}")
-    for header, value in response.headers.items():
-        print(f"{OKBLUE}{header}: {value}{ENDC}")
+    try:
+        response = requests.get(url)
+        print(f"{OKGREEN}[INFO] HTTP Headers:{ENDC}")
+        for header, value in response.headers.items():
+            print(f"{OKBLUE}{header}: {value}{ENDC}")
+    except requests.RequestException as e:
+        print(f"{FAIL}[ERROR] {e}{ENDC}")
 
 def check_sql_injection(url):
     print(f"{OKBLUE}[INFO] Checking for SQL Injection at {url}{ENDC}")
-    subprocess.call(['sqlmap', '-u', url, '--batch'])
+    try:
+        subprocess.call(['sqlmap', '-u', url, '--batch'])
+    except FileNotFoundError:
+        print(f"{FAIL}[ERROR] sqlmap not found. Make sure sqlmap is installed.{ENDC}")
 
 def check_xss(url):
     print(f"{OKBLUE}[INFO] Checking for XSS at {url}{ENDC}")
     # منطق فحص XSS هنا
+    # يمكن إضافة تحليل مخصص لمكتبات مثل OWASP ZAP
 
 def check_lfi(url):
     print(f"{OKBLUE}[INFO] Checking for LFI at {url}{ENDC}")
     lfi_payloads = ["../../../../etc/passwd", "../etc/passwd"]
     for payload in lfi_payloads:
-        lfi_url = f"{url}{payload}"
-        response = requests.get(lfi_url)
-        if "root:x" in response.text:
-            print(f"{FAIL}[VULNERABLE] LFI Detected with payload: {payload}{ENDC}")
-        else:
-            print(f"{OKGREEN}[SAFE] No LFI with payload: {payload}{ENDC}")
+        lfi_url = f"{url}/{payload}"
+        try:
+            response = requests.get(lfi_url)
+            if "root:x" in response.text:
+                print(f"{FAIL}[VULNERABLE] LFI Detected with payload: {payload}{ENDC}")
+            else:
+                print(f"{OKGREEN}[SAFE] No LFI with payload: {payload}{ENDC}")
+        except requests.RequestException as e:
+            print(f"{FAIL}[ERROR] {e}{ENDC}")
 
 def check_csrf(url):
     print(f"{OKBLUE}[INFO] Checking for CSRF at {url}{ENDC}")
     # منطق فحص CSRF هنا
+    # يمكن استخدام أدوات مثل OWASP CSRFTester
 
 def run_nmap(target):
     print(f"{OKBLUE}[INFO] Running nmap on {target}{ENDC}")
-    subprocess.call(['nmap', '-sV', target])
+    try:
+        subprocess.call(['nmap', '-sV', target])
+    except FileNotFoundError:
+        print(f"{FAIL}[ERROR] nmap not found. Make sure nmap is installed.{ENDC}")
 
 def open_webpage(url):
     print(f"{OKBLUE}[INFO] Opening {url} in web browser{ENDC}")
@@ -88,12 +102,15 @@ def find_admin_pages(url):
     ]
     
     for path in admin_paths:
-        full_url = f"{url}/{path}"
-        response = requests.get(full_url)
-        if response.status_code == 200:
-            print(f"{OKGREEN}[FOUND] Admin page found at: {full_url}{ENDC}")
-        else:
-            print(f"{WARNING}[NOT FOUND] Tried: {full_url}{ENDC}")
+        full_url = f"{url.rstrip('/')}/{path}"
+        try:
+            response = requests.get(full_url)
+            if response.status_code == 200:
+                print(f"{OKGREEN}[FOUND] Admin page found at: {full_url}{ENDC}")
+            else:
+                print(f"{WARNING}[NOT FOUND] Tried: {full_url}{ENDC}")
+        except requests.RequestException as e:
+            print(f"{FAIL}[ERROR] {e}{ENDC}")
 
 def main():
     parser = argparse.ArgumentParser(description="Web Vulnerability Scanner")
@@ -115,4 +132,13 @@ def main():
     check_csrf(args.url)
 
     if args.nmap:
-        run_nmap(args
+        run_nmap(args.url)
+    
+    if args.open:
+        open_webpage(args.url)
+
+    if args.admin:
+        find_admin_pages(args.url)
+
+if __name__ == "__main__":
+    main()
